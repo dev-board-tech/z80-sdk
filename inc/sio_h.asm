@@ -1,0 +1,271 @@
+IFNDEF UART_H
+DEFINE UART_H
+
+DEFC SIO_BASE_ADDR=0xB0
+DEFC SIOA = 0
+DEFC SIOB = 1
+DEFC SIOA_ADDR = 0
+DEFC SIOB_ADDR = 1
+DEFC SIO_DAT_ADDR = 0
+DEFC SIO_CMD_ADDR = 2
+DEFC SIOA_D = SIO_BASE_ADDR + SIOA_ADDR + SIO_DAT_ADDR
+DEFC SIOA_C = SIO_BASE_ADDR + SIOA_ADDR + SIO_CMD_ADDR
+DEFC SIOB_D = SIO_BASE_ADDR + SIOB_ADDR + SIO_DAT_ADDR
+DEFC SIOB_C = SIO_BASE_ADDR + SIOB_ADDR + SIO_CMD_ADDR
+
+; _bp = bit position
+; _gp = group position
+; _gm = group mask
+; _m = mode
+; _bm = bit mask
+
+; REG0
+DEFC SIO_REG0 = 0
+DEFC SIO_REG0_CMD_gp =					3
+DEFC SIO_REG0_CMD_gm =					7 << SIO_REG0_CMD_gp
+DEFC SIO_REG0_CMD_NULL_CODE_m = 			0 << SIO_REG0_CMD_gp
+DEFC SIO_REG0_CMD_SEND_ABORT_m = 			1 << SIO_REG0_CMD_gp
+DEFC SIO_REG0_CMD_RESET_EXT_m = 			2 << SIO_REG0_CMD_gp
+DEFC SIO_REG0_CMD_CHANNEL_RESET_m = 			3 << SIO_REG0_CMD_gp
+DEFC SIO_REG0_CMD_ENABLE_INT_m = 			4 << SIO_REG0_CMD_gp
+DEFC SIO_REG0_CMD_RESET_TX_INT_m = 			5 << SIO_REG0_CMD_gp
+DEFC SIO_REG0_CMD_ERROR_RESET_m = 			6 << SIO_REG0_CMD_gp
+DEFC SIO_REG0_CMD_RETURN_FROM_INT_m = 			7 << SIO_REG0_CMD_gp
+
+DEFC SIO_REG1 = 1
+DEFC SIO_REG0_RST_gp =					6
+DEFC SIO_REG0_RST_gm =					3 << SIO_REG0_RST_gp
+DEFC SIO_REG0_RST_NULL_CODE_m = 			0 << SIO_REG0_RST_gp
+DEFC SIO_REG0_RST_RX_CRC_CHECKER_m = 			1 << SIO_REG0_RST_gp
+DEFC SIO_REG0_RST_TX_CRC_GENERATOR_m = 			2 << SIO_REG0_RST_gp
+DEFC SIO_REG0_RST_TX_UNDERRUN_m = 			3 << SIO_REG0_RST_gp
+
+; REG1
+DEFC SIO_DEG1_EXT_INT_ENABLE_bp = 			0
+DEFC SIO_DEG1_EXT_INT_ENABLE_bm = 			1 << SIO_DEG1_EXT_INT_ENABLE_bp
+DEFC SIO_DEG1_TX_INT_ENABLE_bp = 			1
+DEFC SIO_DEG1_TX_INT_ENABLE_bm = 			1 << SIO_DEG1_TX_INT_ENABLE_bp
+DEFC SIO_DEG1_STAT_AFFECT_VECT_bp =			2
+DEFC SIO_DEG1_STAT_AFFECT_VECT_bm =			1 << SIO_DEG1_STAT_AFFECT_VECT_bp
+
+DEFC SIO_REG1_RX_INT_gp =				3
+DEFC SIO_REG1_RX_INT_gm =				3 << SIO_REG1_RX_INT_gp
+DEFC SIO_DEG1_RX_INT_DISABLE_m =			0 << SIO_REG1_RX_INT_gp
+DEFC SIO_DEG1_RX_INT_ON_FIRST_m =			1 << SIO_REG1_RX_INT_gp
+DEFC SIO_DEG1_RX_INT_ON_APP_PAR_AFFECT_FECT_m =		2 << SIO_REG1_RX_INT_gp
+DEFC SIO_DEG1_RX_INT_ON_APP_PAR_NOT_AFFECT_FECT_m =	3 << SIO_REG1_RX_INT_gp
+
+DEFC SIO_DEG1_WAIT_READY_ON_R_T_bp = 			5
+DEFC SIO_DEG1_WAIT_READY_ON_R_T_bm = 			1 << SIO_DEG1_WAIT_READY_ON_R_T_bp
+DEFC SIO_DEG1_WAIT_READY_FUNCTION_bp = 			6
+DEFC SIO_DEG1_WAIT_READY_FUNCTION_bm = 			1 << SIO_DEG1_WAIT_READY_FUNCTION_bp
+DEFC SIO_DEG1_WAIT_READY_ENABLE_bp = 			7
+DEFC SIO_DEG1_WAIT_READY_ENABLE_bm = 			1 << SIO_DEG1_WAIT_READY_ENABLE_bp
+
+; REG2, B only
+DEFC SIO_REG2 = 2
+DEFC SIO_REG_VECTOR = 2
+
+; REG3
+DEFC SIO_REG3 = 3
+DEFC SIO_DEG3_RX_ENABLE_bp = 				0
+DEFC SIO_DEG3_RX_ENABLE_bm = 				1 << SIO_DEG3_RX_ENABLE_bp
+DEFC SIO_DEG3_SYNC_CHAR_LOAD_INHIBIT_bp = 		1
+DEFC SIO_DEG3_SYNC_CHAR_LOAD_INHIBIT_bm = 		1 << SIO_DEG3_SYNC_CHAR_LOAD_INHIBIT_bp
+DEFC SIO_DEG3_ADDRESS_SEARCH_MODE_bp = 			2
+DEFC SIO_DEG3_ADDRESS_SEARCH_MODE_bm = 			1 << SIO_DEG3_ADDRESS_SEARCH_MODE_bp
+DEFC SIO_DEG3_RX_CRC_ENABLE_bp = 			3
+DEFC SIO_DEG3_RX_CRC_ENABLE_bm = 			1 << SIO_DEG3_RX_CRC_ENABLE_bp
+DEFC SIO_DEG3_ENTER_HUNT_PHASE_bp = 			4
+DEFC SIO_DEG3_ENTER_HUNT_PHASE_bm = 			1 << SIO_DEG3_ENTER_HUNT_PHASE_bp
+DEFC SIO_DEG3_AUTO_ENABLES_bp = 			5
+DEFC SIO_DEG3_AUTO_ENABLES_bm = 			1 << SIO_DEG3_AUTO_ENABLES_bp
+
+DEFC SIO_REG3_RX_CHAR_LEN_gp =				6
+DEFC SIO_REG3_RX_CHAR_LEN_gm =				3 << SIO_REG3_RX_CHAR_LEN_gp
+DEFC SIO_DEG3_RX_CHAR_LEN_5BIT_m =			0 << SIO_REG3_RX_CHAR_LEN_gp
+DEFC SIO_DEG3_RX_CHAR_LEN_7BIT_m =			1 << SIO_REG3_RX_CHAR_LEN_gp
+DEFC SIO_DEG3_RX_CHAR_LEN_6BIT_m =			2 << SIO_REG3_RX_CHAR_LEN_gp
+DEFC SIO_DEG3_RX_CHAR_LEN_8BIT_m =			3 << SIO_REG3_RX_CHAR_LEN_gp
+
+; REG4
+DEFC SIO_REG4 = 4
+DEFC SIO_DEG4_PARITY_ENABLE_bp = 			0
+DEFC SIO_DEG4_PARITY_ENABLE_bm = 			1 << SIO_DEG4_PARITY_ENABLE_bp
+DEFC SIO_DEG4_PARITY_MODE_bp = 				1
+DEFC SIO_DEG4_PARITY_ODD_bm = 				0 << SIO_DEG4_PARITY_MODE_bp
+DEFC SIO_DEG4_PARITY_EVEN_bm = 				1 << SIO_DEG4_PARITY_MODE_bp
+
+DEFC SIO_REG4_STOP_MODE_gp =				2
+DEFC SIO_REG4_STOP_MODE_gm =				3 << SIO_REG4_STOP_MODE_gp
+DEFC SIO_DEG4_STOP_MODE_SYNC_ENABLED_m =		0 << SIO_REG4_STOP_MODE_gp
+DEFC SIO_DEG4_STOP_MODE_1_STOP_BIT_m =			1 << SIO_REG4_STOP_MODE_gp
+DEFC SIO_DEG4_STOP_MODE_1_AND_HALF_STOP_BIT_m =		2 << SIO_REG4_STOP_MODE_gp
+DEFC SIO_DEG4_STOP_MODE_2_STOP_BIT_m =			3 << SIO_REG4_STOP_MODE_gp
+
+DEFC SIO_REG4_SYNC_MODE_gp =				4
+DEFC SIO_REG4_SYNC_MODE_gm =				3 << SIO_REG4_SYNC_MODE_gp
+DEFC SIO_DEG4_SYNC_MODE_8BIT_CHARACTER_m =		0 << SIO_REG4_SYNC_MODE_gp
+DEFC SIO_DEG4_SYNC_MODE_16BIT_CHARACTER_m =		1 << SIO_REG4_SYNC_MODE_gp
+DEFC SIO_DEG4_SYNC_MODE_01111110_FLAG_m =		2 << SIO_REG4_SYNC_MODE_gp
+DEFC SIO_DEG4_SYNC_MODE_EXTERNAL_SYNC_m =		3 << SIO_REG4_SYNC_MODE_gp
+
+DEFC SIO_REG4_CLOCK_MODE_gp =				6
+DEFC SIO_REG4_CLOCK_MODE_gm =				3 << SIO_REG4_CLOCK_MODE_gp
+DEFC SIO_DEG4_CLOCK_MODE_X1_m =				0 << SIO_REG4_CLOCK_MODE_gp
+DEFC SIO_DEG4_CLOCK_MODE_X16_m =			1 << SIO_REG4_CLOCK_MODE_gp
+DEFC SIO_DEG4_CLOCK_MODE_X32_m =			2 << SIO_REG4_CLOCK_MODE_gp
+DEFC SIO_DEG4_CLOCK_MODE_X64_m =			3 << SIO_REG4_CLOCK_MODE_gp
+
+; REG5
+DEFC SIO_REG5 = 5
+DEFC SIO_DEG5_TX_CRC_ENABLE_bp = 			0
+DEFC SIO_DEG5_TX_CRC_ENABLE_bm = 			1 << SIO_DEG5_TX_CRC_ENABLE_bp
+DEFC SIO_DEG5_RTS_bp = 					1
+DEFC SIO_DEG5_RTS_bm = 					1 << SIO_DEG5_RTS_bp
+DEFC SIO_DEG5_SDLC_CRC16_bp = 				2
+DEFC SIO_DEG5_SDLC_bm = 				0 << SIO_DEG5_SDLC_CRC16_bp
+DEFC SIO_DEG5_CRC16_bm = 				1 << SIO_DEG5_SDLC_CRC16_bp
+DEFC SIO_DEG5_TX_ENABLE_bp = 				3
+DEFC SIO_DEG5_TX_ENABLE_bm = 				1 << SIO_DEG5_TX_ENABLE_bp
+DEFC SIO_DEG5_SEND_BREAK_bp = 				4
+DEFC SIO_DEG5_SEND_BREAK_bm = 				1 << SIO_DEG5_SEND_BREAK_bp
+
+DEFC SIO_REG5_TX_CHAR_LEN_gp =				5
+DEFC SIO_REG5_TX_CHAR_LEN_gm =				3 << SIO_REG5_TX_CHAR_LEN_gp
+DEFC SIO_DEG5_TX_CHAR_LEN_5BIT_m =			0 << SIO_REG5_TX_CHAR_LEN_gp
+DEFC SIO_DEG5_TX_CHAR_LEN_7BIT_m =			1 << SIO_REG5_TX_CHAR_LEN_gp
+DEFC SIO_DEG5_TX_CHAR_LEN_6BIT_m =			2 << SIO_REG5_TX_CHAR_LEN_gp
+DEFC SIO_DEG5_TX_CHAR_LEN_8BIT_m =			3 << SIO_REG5_TX_CHAR_LEN_gp
+
+DEFC SIO_DEG5_DTR_bp = 					0
+DEFC SIO_DEG5_DTR_bm = 					1 << SIO_DEG5_DTR_bp
+
+; REG6
+DEFC SIO_REG6 = 6
+DEFC SIO_REG_SYNC_BYTE_LOW = 6
+
+; REG7
+DEFC SIO_REG7 = 7
+DEFC SIO_REG_SYNC_BYTE_HIGH = 7
+
+
+
+MACRO SIO_INIT sioBaseAddress, unitNr, divider, rxCharLen, txCharLen, address
+	ld b, unitNr
+	ld c, sioBaseAddress
+	call sio_GetAddr
+	ld a, c
+	ld (address), a
+	ld d, divider
+	ld e, rxCharLen
+	ld h, txCharLen
+	call sio_Set
+ENDM
+
+
+MACRO SIOA_INIT sioBaseAddr, clkDivider
+MACRO_SIOA_INIT:
+SIOA_RESET:
+	;set up TX and RX:
+	ld a, SIO_REG0_CMD_ERROR_RESET_m | SIO_REG0 ;write into WR0: error reset, select WR0
+	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
+	ld a, SIO_REG0_CMD_CHANNEL_RESET_m | SIO_REG0 ;write into WR0: channel reset
+	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
+SIOA_SET_CLK_DIV_STOP_PARITY:
+	ld a,SIO_REG4 ;write into WR0: select WR4
+	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
+	sub a
+	or SIO_DEG4_STOP_MODE_1_STOP_BIT_m
+	or clkDivider
+	; ld a,44h ;44h write into WR4: clkx16,1 stop bit, no parity
+	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
+SIOA_CHAR_LEN_TX_EN_RTS:
+	ld a,SIO_REG5 ;write into WR0: select WR5
+	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
+	sub a
+	or SIO_DEG5_TX_CHAR_LEN_8BIT_m | SIO_DEG5_TX_ENABLE_bm | SIO_DEG5_RTS_bm
+	; ld a,0E8h ;DTR active, TX 8bit, BREAK off, TX on, RTS inactive
+	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
+SIOA_INTERRUPT::
+	ld a,SIO_REG1 ;write into WR0: select WR1
+	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
+	ld a,00000000b ;no interrupt in CH A, special RX condition affects vect
+	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
+SIOA_INTERRUPT_MODE:
+	ld a,SIO_REG1 ;write into WR0: select WR1
+	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
+	ld a,00000000b ;interrupt on all RX characters, parity is not a spec RX condition
+	;buffer overrun is a spec RX condition
+	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
+SIOA_RX_EN:
+	;enable SIO channel A RX
+	ld a,SIO_REG3 ;write into WR0: select WR3
+	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
+	ld a, SIO_DEG3_RX_CHAR_LEN_8BIT_m | SIO_DEG3_RX_ENABLE_bm ; 0C1h ;RX 8bit, auto enable off, RX on
+	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
+	;Channel A RX active
+ENDM
+
+MACRO SIOB_INIT sioBaseAddr, clkDivider
+MACRO_SIOB_INIT:
+SIOB_RESET:
+	;set up TX and RX:
+	ld a, SIO_REG0_CMD_ERROR_RESET_m | SIO_REG0 ;write into WR0: error reset, select WR0
+	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
+	ld a, SIO_REG0_CMD_CHANNEL_RESET_m | SIO_REG0 ;write into WR0: channel reset
+	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
+SIOB_SET_CLK_DIV_STOP_PARITY:
+	ld a,SIO_REG4 ;write into WR0: select WR4
+	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
+	sub a
+	or SIO_DEG4_STOP_MODE_1_STOP_BIT_m
+	or clkDivider
+	; ld a,44h ;44h write into WR4: clkx16,1 stop bit, no parity
+	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
+SIOB_CHAR_LEN_TX_EN_RTS:
+	ld a,SIO_REG5 ;write into WR0: select WR5
+	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
+	sub a
+	or SIO_DEG5_TX_CHAR_LEN_8BIT_m | SIO_DEG5_TX_ENABLE_bm | SIO_DEG5_RTS_bm
+	; ld a,0E8h ;DTR active, TX 8bit, BREAK off, TX on, RTS inactive
+	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
+SIOB_INTERRUPT::
+	ld a,SIO_REG1 ;write into WR0: select WR1
+	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
+	ld a,00000000b ;no interrupt in CH B, special RX condition affects vect
+	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
+SIOB_INTERRUPT_MODE:
+	ld a,SIO_REG1 ;write into WR0: select WR1
+	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
+	ld a,00000000b ;interrupt on all RX characters, parity is not a spec RX condition
+	;buffer overrun is a spec RX condition
+	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
+SIOB_RX_EN:
+	;enable SIO channel A RX
+	ld a,SIO_REG3 ;write into WR0: select WR3
+	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
+	ld a, SIO_DEG3_RX_CHAR_LEN_8BIT_m | SIO_DEG3_RX_ENABLE_bm ; 0C1h ;RX 8bit, auto enable off, RX on
+	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
+	;Channel A RX active
+ENDM
+
+MACRO SIO_SET_INTERRUPTS sioBaseAddr, vector
+MACRO_SIOB_INIT:
+SIO_VECTOR:
+	ld a,SIO_REG2 ;write into WR0: select WR2
+	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
+	ld a,vector ;write into WR2: cmd line int vect (see int vec table)
+	;bits D3,D2,D1 are changed according to RX condition
+	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
+ENDM
+ENDIF
+
+
+
+
+
+
+
+
+
