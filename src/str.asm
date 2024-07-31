@@ -1,3 +1,4 @@
+SECTION KERNEL_UTIL
 ;-----------------------------------------------------------------------
 ; Functions:
 ; str_HByteToChar

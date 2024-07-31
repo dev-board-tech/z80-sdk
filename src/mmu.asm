@@ -3,7 +3,7 @@ INCLUDE "mmu_h.asm"
 SECTION KERNEL_BSS
 BOARD_IO_MMU_BANK_REG_BACK: 
 DEFS 4
-SECTION KERNEL_IO
+SECTION KERNEL_MMU
 
 ;-----------------------------------------------------------------------
 ; Result:

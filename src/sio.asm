@@ -2,7 +2,7 @@ INCLUDE "sio_h.asm"
 SECTION KERNEL_BSS
 BOARD_IO_SIO_SEMAPHORE: 
 DEFS 1
-SECTION KERNEL_IO
+SECTION KERNEL_SIO
 
 ;-----------------------------------------------------------------------
 ; Functions:
@@ -29,18 +29,21 @@ sio_Init:
 ; Functions:
 ; sio_GetAddr
 ; Required:
-; c = SIO config address
+; b = Unit nr
 ; Return
-; c = address
+; c = SIO config address
 ; Altered:
-; a, c
+; a
 ;-----------------------------------------------------------------------
 sio_GetAddr:
+	push af
 	ld a, b
 	and 0x01; Each SIO IC has two units
+	add a
 	add SIO_CMD_ADDR
 	add c
 	ld c, a
+	pop af
 	ret
 	
 ;-----------------------------------------------------------------------
@@ -187,7 +190,6 @@ RX_EMP_BLOCK:
 	bit 0,a
 	jp z,RX_EMP_BLOCK
 	dec c
-	dec c
 	in a, (c)
 	pop bc
 	ret
@@ -219,7 +221,6 @@ RX_EMP_NONBLOCK:
 	pop af
 	call sio_ClrRts
 	dec c
-	dec c
 	in a, (c)
 	set 0, b
 	bit 0, b
@@ -246,7 +247,6 @@ sio_SendC:
 	call sio_TxWaitEmpty
 	; send data is 2 addresses below
 	dec c
-	dec c
 	out (c), a
 	pop bc
 	ret
@@ -261,6 +261,7 @@ sio_SendC:
 ; none
 ;-----------------------------------------------------------------------
 sio_PrintStr:
+	push af
 	push hl
 sio_PrintStr_Loop:
 	ld a, (hl)
@@ -271,6 +272,7 @@ sio_PrintStr_Loop:
 	jr sio_PrintStr_Loop
 sio_PrintStr_End:
 	pop hl
+	pop af
 	ret
 
 ;-----------------------------------------------------------------------
@@ -278,11 +280,13 @@ sio_PrintStr_End:
 ; sio_PrintHHexChar
 ; sio_PrintLHexChar
 ; Required:
+; a = Byte
 ; c = SIO config address
 ; Altered:
-; a
+; none
 ;-----------------------------------------------------------------------
 sio_PrintHHexChar:
+	push af
 	push de
 	push bc
 	call str_HCharToHex
@@ -299,6 +303,7 @@ sio_PrintLHexChar_Skip:
 	ld a, e
 	call sio_SendC
 	pop de
+	pop af
 	ret
 
 ;-----------------------------------------------------------------------
@@ -309,9 +314,10 @@ sio_PrintLHexChar_Skip:
 ; de = Buf len
 ; hl = Buf address
 ; Altered:
-; a
+; none
 ;-----------------------------------------------------------------------
 sio_PrintHHexBuf:
+	push af
 	push de
 	push hl
 sio_PrintHHexBuf_Loop:
@@ -330,6 +336,7 @@ sio_PrintHHexBuf_Continue:
 sio_PrintHHexBuf_End:
 	pop hl
 	pop de
+	pop af
 	ret
 
 

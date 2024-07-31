@@ -16,7 +16,7 @@ DEFS 1	; holds current PIOA direction configuration
 PIOB_IO_OUT:
 DEFS 1	; holds current PIOA output configuration
 
-SECTION KERNEL_IO
+SECTION KERNEL_PIO
 
 ;-----------------------------------------------------------------------
 ; Functions:
@@ -41,14 +41,13 @@ pio_Init:
 	ld a, 0xcf
 	ld(ix + PIO_IO_MODE), a
 	inc c
-	inc c
 	out (c), a
 	xor a
 	dec a
 	ld(ix + PIO_IO_DIR), a
 	out (c), a
 	dec c
-	dec c
+	xor a
 	ld(ix + PIO_IO_OUT), a
 	out (c), a
 	ret

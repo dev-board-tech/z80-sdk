@@ -45,6 +45,8 @@ ENDM
 MACRO MMU_SET_ADDR phyAddr, bank
 	ld a, phyAddr >> 14
 	out (bank), a
+	ld ix, BOARD_IO_MMU_BANK_REG_BACK
+	ld (ix + bank - IO_MMU_BANK_0), a
 ENDM
 
 

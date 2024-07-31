@@ -1,3 +1,4 @@
+SECTION KERNEL_I2C
 ;-----------------------------------------------------------------------
 ; Functions:
 ; i2cs_Init
@@ -42,7 +43,7 @@ MACRO I2C_STOP _
 	out (c), a
 ENDM
 
-I2C_CLK_CYCLE:
+i2c_ClkCycle:
 	; Clock High
 	ld b, (ix + PIO_IO_MODE)
 	out (c), b
@@ -53,9 +54,9 @@ I2C_CLK_CYCLE:
 	scf
 	in b, (c)
 	bit I2CS_SDA_PIN, b
-	jr nz, I2C_CLK_CYCLE_NZ
+	jr nz, i2c_ClkCycle_Nz
 	ccf
-I2C_CLK_CYCLE_NZ:
+i2c_ClkCycle_Nz:
 	inc c
 	inc c
 	; Clock Low
@@ -90,9 +91,10 @@ i2c_Reset:
 	ld b, 0x0a
 i2c_Reset_Loop:
 	push bc
-	call I2C_CLK_CYCLE
+	call i2c_ClkCycle
 	pop bc
 	djnz i2c_Reset_Loop
+	ld b, (ix + PIO_IO_MODE)
 	I2C_SDA_IN()
 	ret
 ;-----------------------------------------------------------------------
@@ -131,13 +133,13 @@ i2c_W_BitLoopHSkip:
 	; Put bit
 	out (c), b
 	out (c), a
-	call I2C_CLK_CYCLE
+	call i2c_ClkCycle
 	pop bc
 	djnz i2c_W_BitLoop
 	ld b, (ix + PIO_IO_MODE)
 	; Set SDA as input
 	I2C_SDA_IN()
-	call I2C_CLK_CYCLE
+	call i2c_ClkCycle
 	jr c, i2c_W_NoAck
 	dec de
 	inc hl
@@ -183,13 +185,13 @@ i2c_R_BitLoopHSkip:
 	; Put bit
 	out (c), b
 	out (c), a
-	call I2C_CLK_CYCLE
+	call i2c_ClkCycle
 	pop bc
 	djnz i2c_R_BitLoopW
 	ld b, (ix + PIO_IO_MODE)
 	; Set SDA as input
 	I2C_SDA_IN()
-	call I2C_CLK_CYCLE
+	call i2c_ClkCycle
 	jr c, i2c_W_NoAck
 	dec e
 	inc hl
@@ -225,11 +227,11 @@ i2c_R_BitLoopHSkipW:
 	; Put bit
 	out (c), b
 	out (c), a
-	call I2C_CLK_CYCLE
+	call i2c_ClkCycle
 	pop bc
 	djnz i2c_R_BitLoopWW
 	I2C_SDA_IN()
-	call I2C_CLK_CYCLE
+	call i2c_ClkCycle
 	jr c, i2c_W_NoAck
 
 i2c_R_Receive:	
@@ -242,7 +244,7 @@ i2c_R_ByteLoopR:
 	ld b, 0x08
 i2c_R_BitLoopR:
 	push bc
-	call I2C_CLK_CYCLE
+	call i2c_ClkCycle
 	rl (hl)
 	pop bc
 	djnz i2c_R_BitLoopR
@@ -252,8 +254,9 @@ i2c_R_BitLoopR:
 	jr nz, i2c_R_LastByteAndNack
 	I2C_SDA_OUT()
 i2c_R_LastByteAndNack:
-	call I2C_CLK_CYCLE
+	call i2c_ClkCycle
 	I2C_SDA_IN()
 	inc hl
 	jr i2c_R_ByteLoopR
+
 
