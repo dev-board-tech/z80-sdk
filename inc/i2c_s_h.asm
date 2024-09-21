@@ -1,6 +1,8 @@
 IFNDEF I2C_S_H
 DEFINE I2C_S_H
 
+INCLUDE "pio_h.asm"
+
 ;-----------------------------------------------------------------------
 ; Altered:
 ; a, bc
@@ -412,4 +414,9 @@ i2c_R_Macro_Stop:
 	out (c), a
 	pop af
 ENDM
+
+
+
+
+
 ENDIF

@@ -1,4 +1,63 @@
+INCLUDE "i2c_s_h.asm"
+INCLUDE "pio_h.asm"
+INCLUDE "board_h.asm"
+
 SECTION KERNEL_I2C
+
+IFDEF I2CS_SCL_PIN_MASK 
+IFDEF I2CS_SDA_PIN_MASK
+;-----------------------------------------------------------------------
+; Altered:
+; none
+;-----------------------------------------------------------------------
+i2cs_RST:
+	push af
+    push bc
+	I2C_RESET_MACRO(PIOB_C, PIOB_D, PIOB_REGS, I2CS_SCL_PIN_MASK, I2CS_SDA_PIN_MASK)
+	pop bc
+    pop af
+    ret
+
+;-----------------------------------------------------------------------
+; Required:
+; de = bytes to send
+; hl = buffer address
+; Return:
+; Flag C = 0' if success, 1' if error
+; Altered:
+; a
+;-----------------------------------------------------------------------
+i2cs_W:
+	push bc
+	push de
+	push hl
+	I2C_W_MACRO(PIOB_C, PIOB_D, PIOB_REGS, I2CS_SCL_PIN_MASK, I2CS_SDA_PIN_MASK, I2CS_SDA_PIN)
+	pop hl
+	pop de
+	pop bc
+    ret
+
+;-----------------------------------------------------------------------
+; Required:
+; b = bytes to send
+; de = bytes to receive
+; hl = buffer address
+; Return:
+; Flag C = 0' if success, 1' if error
+; Altered:
+; a
+;-----------------------------------------------------------------------
+i2cs_R:
+	push bc
+	push de
+	push hl
+	I2C_R_MACRO(PIOB_C, PIOB_D, PIOB_REGS, I2CS_SCL_PIN_MASK, I2CS_SDA_PIN_MASK, I2CS_SDA_PIN)
+	pop hl
+	pop de
+	pop bc
+    ret
+ENDIF
+ENDIF
 ;-----------------------------------------------------------------------
 ; Functions:
 ; i2cs_Init
@@ -8,7 +67,7 @@ SECTION KERNEL_I2C
 ; Altered:
 ;-----------------------------------------------------------------------
 i2cs_Init:
-	PIO_SET_AS_INPUT(I2CS_SDA_PIN_MASK | I2CS_SCL_PIN_MASK)
+	PIO_DIR_INPUT(I2CS_SDA_PIN_MASK | I2CS_SCL_PIN_MASK)
 	dec c
 	dec c
 	PIO_CLR_OUT(I2CS_SDA_PIN_MASK | I2CS_SCL_PIN_MASK)
