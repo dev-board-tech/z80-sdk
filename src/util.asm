@@ -1,4 +1,4 @@
-SECTION KERNEL_RJMP
+SECTION KERNEL_RCALL
 ;-----------------------------------------------------------------------
 ; Result:
 ; h = minor

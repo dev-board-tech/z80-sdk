@@ -1,4 +1,4 @@
-SECTION KERNEL_DRIVER
+SECTION KERNEL_DRIVER_24_I2C
 ;-----------------------------------------------------------------------
 ; Functions:
 ; eep24_I2c_ReadAddr

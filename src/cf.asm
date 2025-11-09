@@ -2,7 +2,7 @@ INCLUDE "cf_h.asm"
 
 INCLUDE "dev/disk_h.asm"
 
-SECTION KERNEL_CF
+SECTION KERNEL_DRIVER_CF
 ;-----------------------------------------------------------------------
 ; Function:
 ; cf_waitForReady

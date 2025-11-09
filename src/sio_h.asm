@@ -158,6 +158,73 @@ MACRO SIO_INIT sioBaseAddress, unitNr, divider, rxCharLen, txCharLen, address
 	call sio_Set
 ENDM
 
+MACRO SIO_PRINT_STR paramAddr, unitNr, str
+LOCAL strAddr, sioPrintStr
+	jr sioPrintStr
+strAddr:
+DEFB str
+sioPrintStr:
+	push bc
+	ld b, unitNr
+	ld a, (paramAddr)
+	ld c, a
+	ld hl, strAddr
+	call sio_PrintStr
+	pop bc
+ENDM
+
+MACRO SIO_PRINT_STR_BUF paramAddr, unitNr, strAddr
+	push bc
+	ld b, unitNr
+	ld a, (paramAddr)
+	ld c, a
+	ld hl, strAddr
+	call sio_PrintStr
+	pop bc
+ENDM
+
+MACRO SIO_PRINT_HEX_BUF paramAddr, unitNr, bufAddr, bufLen
+	push bc
+	ld b, unitNr
+	ld a, (paramAddr)
+	ld c, a
+	ld de, bufLen
+	ld hl, bufAddr
+	call sio_PrintHHexBuf
+	pop bc
+ENDM
+
+MACRO SIO_PRINT_CHAR paramAddr, unitNr
+	push bc
+	mov b, a
+	ld a, (paramAddr)
+	ld c, a
+	mov a, b
+	ld b, unitNr
+	call sio_SendC
+	pop bc
+ENDM
+
+MACRO SIO_PRINT_HEX_CHAR paramAddr, unitNr
+	push bc
+	mov b, a
+	ld a, (paramAddr)
+	ld c, a
+	mov a, b
+	ld b, unitNr
+	call sio_PrintHHexChar
+	pop bc
+ENDM
+
+MACRO SIO_READ_NONBLOCKING paramAddr, unitNr
+	push bc
+	ld b, unitNr
+	ld a, (paramAddr)
+	ld c, a
+	call sio_ReadCNonBlocking
+	pop bc
+ENDM
+
 
 MACRO SIOA_INIT sioBaseAddr, clkDivider
 MACRO_SIOA_INIT:
@@ -168,34 +235,34 @@ SIOA_RESET:
 	ld a, SIO_REG0_CMD_CHANNEL_RESET_m | SIO_REG0 ;write into WR0: channel reset
 	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
 SIOA_SET_CLK_DIV_STOP_PARITY:
-	ld a,SIO_REG4 ;write into WR0: select WR4
+	ld a, SIO_REG4 ;write into WR0: select WR4
 	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
 	sub a
 	or SIO_DEG4_STOP_MODE_1_STOP_BIT_m
 	or clkDivider
-	; ld a,44h ;44h write into WR4: clkx16,1 stop bit, no parity
+	; ld a, 44h ;44h write into WR4: clkx16,1 stop bit, no parity
 	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
 SIOA_CHAR_LEN_TX_EN_RTS:
-	ld a,SIO_REG5 ;write into WR0: select WR5
+	ld a, SIO_REG5 ;write into WR0: select WR5
 	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
 	sub a
 	or SIO_DEG5_TX_CHAR_LEN_8BIT_m | SIO_DEG5_TX_ENABLE_bm | SIO_DEG5_RTS_bm
-	; ld a,0E8h ;DTR active, TX 8bit, BREAK off, TX on, RTS inactive
+	; ld a, 0E8h ;DTR active, TX 8bit, BREAK off, TX on, RTS inactive
 	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
-SIOA_INTERRUPT::
-	ld a,SIO_REG1 ;write into WR0: select WR1
+SIOA_INTERRUPT:
+	ld a, SIO_REG1 ;write into WR0: select WR1
 	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
-	ld a,00000000b ;no interrupt in CH A, special RX condition affects vect
+	ld a, 00000000b ;no interrupt in CH A, special RX condition affects vect
 	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
 SIOA_INTERRUPT_MODE:
-	ld a,SIO_REG1 ;write into WR0: select WR1
+	ld a, SIO_REG1 ;write into WR0: select WR1
 	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
-	ld a,00000000b ;interrupt on all RX characters, parity is not a spec RX condition
+	ld a, 00000000b ;interrupt on all RX characters, parity is not a spec RX condition
 	;buffer overrun is a spec RX condition
 	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
 SIOA_RX_EN:
 	;enable SIO channel A RX
-	ld a,SIO_REG3 ;write into WR0: select WR3
+	ld a, SIO_REG3 ;write into WR0: select WR3
 	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
 	ld a, SIO_DEG3_RX_CHAR_LEN_8BIT_m | SIO_DEG3_RX_ENABLE_bm ; 0C1h ;RX 8bit, auto enable off, RX on
 	out (sioBaseAddr + SIOA_ADDR + SIO_CMD_ADDR), a
@@ -211,34 +278,34 @@ SIOB_RESET:
 	ld a, SIO_REG0_CMD_CHANNEL_RESET_m | SIO_REG0 ;write into WR0: channel reset
 	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
 SIOB_SET_CLK_DIV_STOP_PARITY:
-	ld a,SIO_REG4 ;write into WR0: select WR4
+	ld a, SIO_REG4 ;write into WR0: select WR4
 	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
 	sub a
 	or SIO_DEG4_STOP_MODE_1_STOP_BIT_m
 	or clkDivider
-	; ld a,44h ;44h write into WR4: clkx16,1 stop bit, no parity
+	; ld a, 44h ;44h write into WR4: clkx16,1 stop bit, no parity
 	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
 SIOB_CHAR_LEN_TX_EN_RTS:
-	ld a,SIO_REG5 ;write into WR0: select WR5
+	ld a, SIO_REG5 ;write into WR0: select WR5
 	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
 	sub a
 	or SIO_DEG5_TX_CHAR_LEN_8BIT_m | SIO_DEG5_TX_ENABLE_bm | SIO_DEG5_RTS_bm
-	; ld a,0E8h ;DTR active, TX 8bit, BREAK off, TX on, RTS inactive
+	; ld a, 0E8h ;DTR active, TX 8bit, BREAK off, TX on, RTS inactive
 	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
-SIOB_INTERRUPT::
-	ld a,SIO_REG1 ;write into WR0: select WR1
+SIOB_INTERRUPT:
+	ld a, SIO_REG1 ;write into WR0: select WR1
 	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
-	ld a,00000000b ;no interrupt in CH B, special RX condition affects vect
+	ld a, 00000000b ;no interrupt in CH B, special RX condition affects vect
 	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
 SIOB_INTERRUPT_MODE:
-	ld a,SIO_REG1 ;write into WR0: select WR1
+	ld a, SIO_REG1 ;write into WR0: select WR1
 	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
-	ld a,00000000b ;interrupt on all RX characters, parity is not a spec RX condition
+	ld a, 00000000b ;interrupt on all RX characters, parity is not a spec RX condition
 	;buffer overrun is a spec RX condition
 	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
 SIOB_RX_EN:
 	;enable SIO channel A RX
-	ld a,SIO_REG3 ;write into WR0: select WR3
+	ld a, SIO_REG3 ;write into WR0: select WR3
 	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
 	ld a, SIO_DEG3_RX_CHAR_LEN_8BIT_m | SIO_DEG3_RX_ENABLE_bm ; 0C1h ;RX 8bit, auto enable off, RX on
 	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
@@ -248,9 +315,9 @@ ENDM
 MACRO SIO_SET_INTERRUPTS sioBaseAddr, vector
 MACRO_SIOB_INIT:
 SIO_VECTOR:
-	ld a,SIO_REG2 ;write into WR0: select WR2
+	ld a, SIO_REG2 ;write into WR0: select WR2
 	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
-	ld a,vector ;write into WR2: cmd line int vect (see int vec table)
+	ld a, vector ;write into WR2: cmd line int vect (see int vec table)
 	;bits D3,D2,D1 are changed according to RX condition
 	out (sioBaseAddr + SIOB_ADDR + SIO_CMD_ADDR), a
 ENDM

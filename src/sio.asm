@@ -2,7 +2,7 @@ INCLUDE "sio_h.asm"
 SECTION KERNEL_BSS
 BOARD_IO_SIO_SEMAPHORE: 
 DEFS 1
-SECTION KERNEL_SIO
+SECTION KERNEL_IO_SIO
 
 ;-----------------------------------------------------------------------
 ; Functions:
@@ -50,6 +50,7 @@ sio_GetAddr:
 ; Functions:
 ; sio_Set
 ; Required:
+; b = unit nr
 ; c = SIO config address
 ; d = Clk divider
 ; e = Rx char size

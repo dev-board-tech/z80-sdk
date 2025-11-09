@@ -1,4 +1,4 @@
-SECTION KERNEL_MOUSE
+SECTION KERNEL_DRIVER_MOUSE
 ;-----------------------------------------------------------------------
 ; Functions:
 ; mouse_Init

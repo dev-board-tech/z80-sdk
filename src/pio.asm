@@ -16,7 +16,7 @@ DEFS 1	; holds current PIOA direction configuration
 PIOB_IO_OUT:
 DEFS 1	; holds current PIOA output configuration
 
-SECTION KERNEL_PIO
+SECTION KERNEL_IO_PIO
 
 ;-----------------------------------------------------------------------
 ; Functions:
