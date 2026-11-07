@@ -1,4 +1,4 @@
-INCLUDE "mmu_h.asm"
+INCLUDE "dev/mmu_h.asm"
 
 SECTION KERNEL_BSS
 BOARD_IO_MMU_BANK_REG_BACK: 

@@ -1,5 +1,5 @@
 INCLUDE "boot_h.asm"
-INCLUDE "delay_h.asm"
+INCLUDE "sys/delay_h.asm"
 ;-----------------------------------------------------------------------
 ; Required:
 ; bc de = delay in ms

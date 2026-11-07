@@ -1,7 +1,7 @@
 IFNDEF I2C_S_H
 DEFINE I2C_S_H
 
-INCLUDE "pio_h.asm"
+INCLUDE "dev/pio_h.asm"
 
 ;-----------------------------------------------------------------------
 ; Altered:

@@ -1,5 +1,5 @@
-INCLUDE "i2c_s_h.asm"
-INCLUDE "pio_h.asm"
+INCLUDE "dev/i2c_s_h.asm"
+INCLUDE "dev/pio_h.asm"
 INCLUDE "board_h.asm"
 
 SECTION KERNEL_IO_I2C

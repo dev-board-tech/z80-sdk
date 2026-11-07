@@ -1,7 +1,7 @@
 IFNDEF DISK_H
 DEFINE DISK_H
 
-INCLUDE "util_h.asm"
+INCLUDE "sys/util_h.asm"
 
 ;Bytes are arranged as MSB
 
@@ -42,43 +42,43 @@ ENDM
 
 ;Expects ix to have the param address
 MACRO DISK_IOCTL _
-	ld h, (ix + DISK_IOCTL_FUNC + 0)
-	ld l, (ix + DISK_IOCTL_FUNC + 1)
+	ld l, (ix + DISK_IOCTL_FUNC + 0)
+	ld h, (ix + DISK_IOCTL_FUNC + 1)
 	icall(hl)
 ENDM
 
 MACRO DISK_IOCTL_P paramPtr
 	ld ix, paramPtr
-	ld h, (ix + DISK_IOCTL_FUNC + 0)
-	ld l, (ix + DISK_IOCTL_FUNC + 1)
+	ld l, (ix + DISK_IOCTL_FUNC + 0)
+	ld h, (ix + DISK_IOCTL_FUNC + 1)
 	icall(hl)
 ENDM
 
 ;Expects ix to have the param address
 MACRO DISK_READ _
-	ld h, (ix + DISK_READ_FUNC + 0)
-	ld l, (ix + DISK_READ_FUNC + 1)
+	ld l, (ix + DISK_READ_FUNC + 0)
+	ld h, (ix + DISK_READ_FUNC + 1)
 	icall(hl)
 ENDM
 
 MACRO DISK_READ_P paramPtr
 	ld ix, paramPtr
-	ld h, (ix + DISK_READ_FUNC + 0)
-	ld l, (ix + DISK_READ_FUNC + 1)
+	ld l, (ix + DISK_READ_FUNC + 0)
+	ld h, (ix + DISK_READ_FUNC + 1)
 	icall(hl)
 ENDM
 
 ;Expects ix to have the param address
 MACRO DISK_WRITE _
-	ld h, (ix + DISK_WRITE_FUNC + 0)
-	ld l, (ix + DISK_WRITE_FUNC + 1)
+	ld l, (ix + DISK_WRITE_FUNC + 0)
+	ld h, (ix + DISK_WRITE_FUNC + 1)
 	icall(hl)
 ENDM
 
 MACRO DISK_WRITE_P paramPtr
 	ld ix, paramPtr
-	ld h, (ix + DISK_WRITE_FUNC + 0)
-	ld l, (ix + DISK_WRITE_FUNC + 1)
+	ld l, (ix + DISK_WRITE_FUNC + 0)
+	ld h, (ix + DISK_WRITE_FUNC + 1)
 	icall(hl)
 ENDM
 
@@ -100,14 +100,14 @@ ENDM
 
 ;Expects ix to have the param address
 MACRO DISK_WRITE_CONST_BUFF buffAddr
-	ld (ix + DISK_BUFF_ADDR + 1), 0xFF & buffAddr
 	ld (ix + DISK_BUFF_ADDR + 0), 0xFF & (buffAddr >> 8)
+	ld (ix + DISK_BUFF_ADDR + 1), 0xFF & buffAddr
 ENDM
 
 MACRO DISK_WRITE_CONST_BUFF_P paramPtr, buffAddr
 	ld ix, paramPtr
-	ld (ix + DISK_BUFF_ADDR + 1), 0xFF & buffAddr
 	ld (ix + DISK_BUFF_ADDR + 0), 0xFF & (buffAddr >> 8)
+	ld (ix + DISK_BUFF_ADDR + 1), 0xFF & buffAddr
 ENDM
 
 ;Expects ix to have the param address

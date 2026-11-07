@@ -1,4 +1,4 @@
-INCLUDE "cf_h.asm"
+INCLUDE "device/cf_h.asm"
 
 INCLUDE "dev/disk_h.asm"
 
@@ -7,6 +7,7 @@ SECTION KERNEL_DRIVER_CF
 ; Function:
 ; cf_waitForReady
 ; Required:
+; ix = param base address
 ; b = timeout
 ; Return:
 ; Flag C = 0' if success, 1' if error
@@ -47,27 +48,29 @@ cf_waitForReady_Timeout:
 ;-----------------------------------------------------------------------
 ; Function:
 ; cf_Init
+; Required:
+; ix = param base address
 ; Return:
 ; Flag C = 0' if success, 1' if error
 ; Altered:
 ; a, b
 ;-----------------------------------------------------------------------
 cf_Init:
-	ld a, 0xFF & (cf_Init >> 8)
-	ld (ix + DISK_INIT_FUNC + 0), a
 	ld a, 0xFF & cf_Init
+	ld (ix + DISK_INIT_FUNC + 0), a
+	ld a, 0xFF & (cf_Init >> 8)
 	ld (ix + DISK_INIT_FUNC + 1), a
-	ld a, 0xFF & (cf_IoCtl >> 8)
-	ld (ix + DISK_IOCTL_FUNC + 0), a
 	ld a, 0xFF & cf_IoCtl
+	ld (ix + DISK_IOCTL_FUNC + 0), a
+	ld a, 0xFF & (cf_IoCtl >> 8)
 	ld (ix + DISK_IOCTL_FUNC + 1), a
-	ld a, 0xFF & (cf_Read >> 8)
-	ld (ix + DISK_READ_FUNC + 0), a
 	ld a, 0xFF & cf_Read
+	ld (ix + DISK_READ_FUNC + 0), a
+	ld a, 0xFF & (cf_Read >> 8)
 	ld (ix + DISK_READ_FUNC + 1), a
-	ld a, 0xFF & (cf_Write >> 8)
-	ld (ix + DISK_WRITE_FUNC + 0), a
 	ld a, 0xFF & cf_Write
+	ld (ix + DISK_WRITE_FUNC + 0), a
+	ld a, 0xFF & (cf_Write >> 8)
 	ld (ix + DISK_WRITE_FUNC + 1), a
 	ld b, 0x0
 cf_Init_WaitReady:
@@ -129,7 +132,7 @@ cf_Read:
 	out (CF_REG_LBA_8), a
 	ld a, (ix + DISK_ADDRESS + 1)
 	out (CF_REG_LBA_16), a
-	ld a, 0xE0
+	ld a, 0x40
 	or (ix + DISK_ADDRESS + 0)
 	out (CF_REG_LBA_24), a
 	ld a, (ix + DISK_BLOCKS)
@@ -146,8 +149,8 @@ cf_Read:
 	; We can start reading the data. We have to read 512 bytes, even though we don't
 	; need them all.
 	ld c, CF_REG_DATA
-	ld h, (ix + DISK_BUFF_ADDR + 0)
-	ld l, (ix + DISK_BUFF_ADDR + 1)
+	ld l, (ix + DISK_BUFF_ADDR + 0)
+	ld h, (ix + DISK_BUFF_ADDR + 1)
 	; 256 bytes to read
 cf_Read_NextSector:
 	push bc
@@ -206,8 +209,8 @@ cf_Write:
 	jp nz, cf_Write_ErrOccurred
 	; We can fill the CompactFlash sector buffer
 	ld c, CF_REG_DATA
-	ld h, (ix + DISK_BUFF_ADDR + 0)
-	ld l, (ix + DISK_BUFF_ADDR + 1)
+	ld l, (ix + DISK_BUFF_ADDR + 0)
+	ld h, (ix + DISK_BUFF_ADDR + 1)
 	push bc
 cf_Write_NextSector:
 	ld b, 0

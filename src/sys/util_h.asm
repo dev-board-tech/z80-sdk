@@ -17,18 +17,22 @@ ENDM
 
 MACRO ICALL callAddr
 LOCAL thisAddr
-	ld de, thisAddr
-	push de
+	push iy
+	ld iy, thisAddr
+	push iy
 	jp (callAddr)
 thisAddr:
+	pop iy
 ENDM
 
-MACRO icall callAddr
+MACRO icall callAddrReg
 LOCAL thisAddr
-	ld de, thisAddr
-	push de
-	jp (callAddr)
+	push iy
+	ld iy, thisAddr
+	push iy
+	jp (callAddrReg)
 thisAddr:
+	pop iy
 ENDM
 
 

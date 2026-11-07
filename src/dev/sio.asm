@@ -1,4 +1,4 @@
-INCLUDE "sio_h.asm"
+INCLUDE "dev/sio_h.asm"
 SECTION KERNEL_BSS
 BOARD_IO_SIO_SEMAPHORE: 
 DEFS 1
@@ -272,6 +272,37 @@ sio_PrintStr_Loop:
 	inc hl
 	jr sio_PrintStr_Loop
 sio_PrintStr_End:
+	pop hl
+	pop af
+	ret
+
+;-----------------------------------------------------------------------
+; Functions:
+; sio_PrintStrBuf
+; Required:
+; c = SIO config address
+; de = Buf len
+; hl = string address
+; Altered:
+; none
+;-----------------------------------------------------------------------
+sio_PrintStrBuf:
+	push af
+	push hl
+sio_PrintStrBuf_Loop:
+	dec de
+	ld a, d
+	cp 0
+	jr NZ, sio_PrintStrBuf_0
+	ld a, e
+	cp 0
+	jr Z, sio_PrintStrBuf_End
+sio_PrintStrBuf_0:
+	ld a, (hl)
+	call sio_SendC
+	inc hl
+	jr sio_PrintStrBuf_Loop
+sio_PrintStrBuf_End:
 	pop hl
 	pop af
 	ret
